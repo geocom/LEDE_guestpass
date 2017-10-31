@@ -29,5 +29,7 @@ Check that it works by running ruby password_setter.rb if it works then your goo
 **Cron Task(Scheduled Tasks)**
 
 This will run the code daily at 2:30AM.
+
 `30 2 * * * ruby /overlay/password_setter/gen_password.rb >> /overlay/password_setter/log.log 2>&1`
+
 You should set this at a time where the wifi is not going to be used. The wifi interface is restarted so if your using your wifi at this time you may lose connectivity for a short time.
