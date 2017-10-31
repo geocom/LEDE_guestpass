@@ -5,12 +5,15 @@ This has been tested to work on LEDE with ruby installed. You can find ruby in t
 This will generate a password from a list of words separated by a new line and set a new SSID with the date of generation so that devices will treat it as a new access point and can be setup to automatically run via Cron 
 
 **IMPORTANT!!!**
+
 This code in no way separates your networks it does not setup any interfaces firewalls or wifi access points. If you use this make sure to setup firewalls and interfaces correctly.
 
-**What does it do**
+**What Does It Do**
+
 This will generate a password from a list of words separated by a new line and set a new SSID with the date of generation so that devices will treat it as a new access point and can be setup to automatically run via Cron 
 
 **To Install**
+
 Setup a wifi network **DO NOT SET THIS PASSWORD TO BE THE SAME AS OTHER NETWORKS OTHERWISE IT WILL CHANGE ALL YOUR WIFI PASSWORDS**
 
 Install ruby if not already installed
