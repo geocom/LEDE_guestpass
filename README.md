@@ -14,7 +14,7 @@ This will generate a password from a list of words separated by a new line and s
 
 **To Install**
 
-Setup a wifi network **DO NOT SET THIS PASSWORD TO BE THE SAME AS OTHER NETWORKS OTHERWISE IT WILL CHANGE ALL YOUR WIFI PASSWORDS**
+Setup a wifi network **DO NOT SET YOUR GUEST PASSWORD TO BE THE SAME AS OTHER NETWORKS OTHERWISE IT WILL CHANGE ALL YOUR WIFI PASSWORDS**
 
 Install ruby if not already installed
 
