@@ -61,3 +61,4 @@ end
 File.open("/etc/config/wireless", 'w') { |file| file.write(new_wifi_file.join("\n")) }
 
 `wifi down; wifi up;`
+`cp /overlay/password_setter/ssid.txt /www/luci-static/resources/rand_ssid.txt`
