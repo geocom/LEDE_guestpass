@@ -1,0 +1,24 @@
+Your config should only include one config below are some example setups.
+{
+  "ssid": "Guest Wi-Fi",
+  "mode": "setter",
+  "password_type": "randword",
+  "password_block_count": 4
+}
+
+{
+  "ssid": "Guest Wi-Fi",
+  "mode": "clone",
+  "protocol": "http",
+  "address": "192.168.1.1",
+  "max_run_hours": 1
+}
+
+{
+  "ssid": "Guest Wi-Fi",
+  "mode": "clone",
+  "protocol": "https",
+  "address": "192.168.1.1",
+  "certfile": "certs/remotecert.cert",
+  "max_run_hours": 1
+}
