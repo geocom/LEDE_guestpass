@@ -142,6 +142,7 @@ else
     #set it live unless we are set to do a dry run. It is a good idea to do so on your first run so that you can revert if there is a config issue
     `uci commit wireless`
     `luci-reload`
+    `wifi reload`
   end
   File.open("/www/luci-static/resources/rand_ssid.txt", 'w') { |file| file.write("#{ssid} #{Time.now.strftime("%d/%m/%y")}") }
 end
