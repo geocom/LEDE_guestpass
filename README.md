@@ -16,7 +16,8 @@ This will generate a password from a list of supplied words(supplied by a txt fi
 
 Setup Wi-Fi network
 
-Install ruby, ruby-json and ruby-open3 if not already installed via opkg or luci you will also need to add ruby-enc-extra ruby-net-http for any device set to clone from another
+Install ruby, ruby-json and ruby-open3 if not already installed via opkg or luci to use 4bithex you will need ruby-securerandom. If cloning will also need to add ruby-enc-extra ruby-net-http for any device set to clone from another.
+If that all sounds to difficult and you have the space for it install ruby and ruby-stdlib(this contains everything above)
 
 Option 1
 scp the files to your device

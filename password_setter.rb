@@ -75,7 +75,7 @@ if wifi_config["mode"] == "clone"
 
 elsif wifi_config["mode"] == "setter"
   selected_words = []
-  if wifi_config["password_type"] = "randword"
+  if wifi_config["password_type"] == "randword"
     all_words     = File.read("#{Dir.pwd}/words.txt").split("\n")
 
     (1..(wifi_config["password_block_count"].to_i * 2)).each do |word|
@@ -85,8 +85,9 @@ elsif wifi_config["mode"] == "setter"
       selected_words.delete_at(Random.rand(selected_words.count))
     end
   elsif wifi_config["password_type"] == "4bytehex"
+    require 'securerandom'
     (1..wifi_config["password_block_count"].to_i).each do |index|
-      selected_words = SecureRandom.hex(2)
+      selected_words << SecureRandom.hex(2)
     end
   end
   new_password = selected_words.join("-")
