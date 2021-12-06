@@ -13,12 +13,3 @@ Your config should only include one config below are some example setups.
   "address": "192.168.1.1",
   "max_run_hours": 1
 }
-
-{
-  "ssid": "Guest Wi-Fi",
-  "mode": "clone",
-  "protocol": "https",
-  "address": "192.168.1.1",
-  "certfile": "certs/remotecert.cert",
-  "max_run_hours": 1
-}

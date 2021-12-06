@@ -32,10 +32,14 @@ Code Thanks(People Who Have Shaped This File)
 
 
 require 'json'
+require "open3"
 
 wifi_config = JSON.parse(File.read("#{Dir.pwd}/config.json"))
-
-last_password = File.read("/www/luci-static/resources/rand_pass.txt").chomp
+if File.exist?("/www/luci-static/resources/rand_pass.txt")
+  last_password = File.read("/www/luci-static/resources/rand_pass.txt").chomp
+else
+  last_password = ""
+end
 ssid          = wifi_config["ssid"].chomp
 
 start_time = Time.now
@@ -47,21 +51,22 @@ if wifi_config["mode"] == "clone"
   while code_complete == false do
     ##Download from setting router
     if wifi_config["protocol"] == "https"
-      uri = URI("https://#{wifi_config["address"]}/www/luci-static/resources/rand_pass.txt")
-      Net::HTTP.start(uri.host, uri.port, :cert => "#{Dir.pwd}/#{wifi_config["certfile"]}", :use_ssl => true) do |http|
+      uri = URI("https://#{wifi_config["address"]}/luci-static/resources/rand_pass.txt")
+      Net::HTTP.start(uri.host, uri.port, :cert => "#{Dir.pwd}/#{wicd fi_config["certfile"]}", :use_ssl => true) do |http|
         request = Net::HTTP::Get.new uri
         data = http.request request # Net::HTTPResponse object
       end
     else
-      uri = URI("http://#{wifi_config["address"]}/www/luci-static/resources/rand_pass.txt")
+      uri = URI("http://#{wifi_config["address"]}/luci-static/resources/rand_pass.txt")
       data = Net::HTTP.get_response(uri) # => String
     end
     ##Process the data
-    if data.code == 200 && not data.body != last_password
+    if data.code.to_i == 200 && data.body.strip != last_password
         code_complete = true
         new_password = data.body.strip
     else
-      if (start_time + wifi_config["max_run_hours"].hours)  <= Time.now
+      if (start_time + (3600 * wifi_config["max_run_hours"]))  <= Time.now
+        puts "Password Not Set. Timeout Reached, Password On Host Device Has Not Changed or Cannot Be Found"
         raise "Timeout Reached"
       end
       sleep 5
@@ -87,7 +92,7 @@ elsif wifi_config["mode"] == "setter"
   new_password = selected_words.join("-")
 end
 
-puts new_password
+puts "Setting New Password As #{new_password}"
 
 File.open("/www/luci-static/resources/rand_pass.txt", 'w') { |file| file.write(new_password) }
 
@@ -114,19 +119,25 @@ if wifi_config["settype"] == "filechange"
   File.open("/www/luci-static/resources/rand_ssid.txt", 'w') { |file| file.write("#{ssid} #{Time.now.strftime("%d/%m/%y")}") }
 else
   #set the password and ssid using uci
+  puts "Setting via UCI"
   i = 0
-  while true do
-    cmd = `uci get wireless.@wifi-iface[#{i}].ssid`
-    if cmd.include?("uci: Entry not found") == true
+  should_run = true
+  passwords_set = 0
+  while should_run do
+		stdin, stdout, stderr = Open3.capture3("uci get wireless.@wifi-iface[#{i}].ssid")
+    if stdout.include?("uci: Entry not found") == true
       #no more entries so can break out
-      break
-    elsif cmd.include?(ssid) == true
+      should_run = false
+    elsif stdin.include?(ssid) == true
+      passwords_set += 1
       `uci set wireless.@wifi-iface[#{i}].ssid='#{ssid} #{Time.now.strftime("%d/%m/%y")}'`
       `uci set wireless.@wifi-iface[#{i}].key='#{new_password}'`
     end
     i = i + 1
   end
+  puts "Found #{passwords_set} SSID To Set Password"
   if not wifi_config["dry_run"] == "true"
+    puts "Setting Live"
     #set it live unless we are set to do a dry run. It is a good idea to do so on your first run so that you can revert if there is a config issue
     `uci commit wireless`
     `luci-reload`

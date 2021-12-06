@@ -1,5 +1,3 @@
-Development branch note consider this still in very alpha stage. Need to upload to GitHub to clone it onto the device to make sure it works. This at present is untested.
-
 # LEDE Guest Password
 
 This has been tested to work on openwrt(was LEDE) with ruby installed. You can find ruby in the packages list on any openwrt install.
@@ -18,19 +16,16 @@ This will generate a password from a list of supplied words(supplied by a txt fi
 
 Setup Wi-Fi network
 
-Install ruby and git(optional see option 1 below) if not already installed via opkg or luci
-
-ssh into your openwrt device
+Install ruby, ruby-json and ruby-open3 if not already installed via opkg or luci you will also need to add ruby-enc-extra ruby-net-http for any device set to clone from another
 
 Option 1
-`cd /overlay
-git clone https://github.com/geocom/LEDE_guestpass.git`
+scp the files to your device
+`scp -r '<LEDE_guestpass location>' root@<deviceIP>:/overlay/LEDE_guestpass`
 
-Option 2
-
-`mkdir /overlay/LEDE_guestpass`
-
-copy password_setter into this directory
+Option 2(Don't use if your device has low amounts of storage in overlay as the base GIT package)
+Download onto your device using Git.
+SSH into your device cd into /overlay and run
+`git clone https://github.com/geocom/LEDE_guestpass.git`
 
 Both Option 1 & Option 2
 
@@ -55,8 +50,9 @@ Check that it works by running ruby password_setter.rb if it works then your goo
 **Cron Task(Scheduled Tasks)**
 
 This will run the code daily at 2:30AM.
+For any setup where cloning is required its important that you setup all of your devices time zone and time settings correctly in System -> System.
 
-`30 2 * * * ruby /overlay/LEDE_guestpass/password_setter.rb >> /overlay/LEDE_guestpass/log.log 2>&1`
+`30 2 * * * ruby /overlay/LEDE_guestpass/password_setter.rb >> /tmp/guestpass_log.log 2>&1`
 
 You should set this at a time where the Wi-Fi is not going to be used. The Wi-Fi interface is restarted so if your using your Wi-Fi at this time you may lose connectivity for a short time.
 
@@ -93,6 +89,7 @@ Sets the number of blocks that the password is e.g word-word is 2 word-word-word
 set a maximum amount of time that the script will try and run to clone the password from another device recommended 1 hour
 
 **protocol = http or https**
+**Untested. My AP's Have A Low Amount of Storage So Have Been Unable To Test**
 
 Chose between http or https. Openwrt supports https however the key is a self signed cert so there is no way for us to just approve the signature without a public key being installed on your device. To install the key download the public key from you setter device and add it to the certs file. After this set the certfile config to the cert path
 
