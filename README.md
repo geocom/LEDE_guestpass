@@ -23,7 +23,7 @@ Option 1
 scp the files to your device
 `scp -r '<LEDE_guestpass location>' root@<deviceIP>:/overlay/LEDE_guestpass`
 
-Option 2(Don't use if your device has low amounts of storage in overlay as the base GIT package)
+Option 2(Don't use if your device has low amounts of storage in overlay as the base GIT package take quite alot of it)
 Download onto your device using Git.
 SSH into your device cd into /overlay and run
 `git clone https://github.com/geocom/LEDE_guestpass.git`
