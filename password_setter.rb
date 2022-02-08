@@ -97,52 +97,53 @@ puts "Setting New Password As #{new_password}"
 
 File.open("/www/luci-static/resources/rand_pass.txt", 'w') { |file| file.write(new_password) }
 
-if wifi_config["settype"] == "filechange"
-  ##Set the password and ssid by changing the wireless file. Recommed you use uci unless you dont have uci
-  new_wifi_file = []
+if not wifi_config["nowifi"] == "true"
+  if wifi_config["settype"] == "filechange"
+    ##Set the password and ssid by changing the wireless file. Recommed you use uci unless you dont have uci
+    new_wifi_file = []
 
-  File.read("/etc/config/wireless").split("\n").each do |line|
-          if line.include?("option key '#{last_password}'")
-              new_wifi_file << "      		option key '#{selected_words.join("-")}'"
-          elsif line.include?("option ssid '#{ssid}")
-          	new_wifi_file << "      		option ssid '#{ssid} #{Time.now.strftime("%d/%m/%y")}'"
-          else
-              new_wifi_file << line
-          end
-  end
-
-  `cp -f /etc/config/wireless /etc/config/wireless.backup`
-
-  File.open("/etc/config/wireless", 'w') { |file| file.write(new_wifi_file.join("\n")) }
-
-  `wifi down; wifi up;`
-
-  File.open("/www/luci-static/resources/rand_ssid.txt", 'w') { |file| file.write("#{ssid} #{Time.now.strftime("%d/%m/%y")}") }
-else
-  #set the password and ssid using uci
-  puts "Setting via UCI"
-  i = 0
-  should_run = true
-  passwords_set = 0
-  while should_run do
-		stdin, stdout, stderr = Open3.capture3("uci get wireless.@wifi-iface[#{i}].ssid")
-    if stdout.include?("uci: Entry not found") == true
-      #no more entries so can break out
-      should_run = false
-    elsif stdin.include?(ssid) == true
-      passwords_set += 1
-      `uci set wireless.@wifi-iface[#{i}].ssid='#{ssid} #{Time.now.strftime("%d/%m/%y")}'`
-      `uci set wireless.@wifi-iface[#{i}].key='#{new_password}'`
+    File.read("/etc/config/wireless").split("\n").each do |line|
+            if line.include?("option key '#{last_password}'")
+                new_wifi_file << "      		option key '#{selected_words.join("-")}'"
+            elsif line.include?("option ssid '#{ssid}")
+            	new_wifi_file << "      		option ssid '#{ssid} #{Time.now.strftime("%d/%m/%y")}'"
+            else
+                new_wifi_file << line
+            end
     end
-    i = i + 1
-  end
-  puts "Found #{passwords_set} SSID To Set Password"
-  if not wifi_config["dry_run"] == "true"
-    puts "Setting Live"
-    #set it live unless we are set to do a dry run. It is a good idea to do so on your first run so that you can revert if there is a config issue
-    `uci commit wireless`
-    `luci-reload`
-    `wifi reload`
+
+    `cp -f /etc/config/wireless /etc/config/wireless.backup`
+
+    File.open("/etc/config/wireless", 'w') { |file| file.write(new_wifi_file.join("\n")) }
+
+    `wifi down; wifi up;`
+
+  else
+    #set the password and ssid using uci
+    puts "Setting via UCI"
+    i = 0
+    should_run = true
+    passwords_set = 0
+    while should_run do
+  		stdin, stdout, stderr = Open3.capture3("uci get wireless.@wifi-iface[#{i}].ssid")
+      if stdout.include?("uci: Entry not found") == true
+        #no more entries so can break out
+        should_run = false
+      elsif stdin.include?(ssid) == true
+        passwords_set += 1
+        `uci set wireless.@wifi-iface[#{i}].ssid='#{ssid} #{Time.now.strftime("%d/%m/%y")}'`
+        `uci set wireless.@wifi-iface[#{i}].key='#{new_password}'`
+      end
+      i = i + 1
+    end
+    puts "Found #{passwords_set} SSID To Set Password"
+    if not wifi_config["dry_run"] == "true"
+      puts "Setting Live"
+      #set it live unless we are set to do a dry run. It is a good idea to do so on your first run so that you can revert if there is a config issue
+      `uci commit wireless`
+      `luci-reload`
+      `wifi reload`
+    end
   end
   File.open("/www/luci-static/resources/rand_ssid.txt", 'w') { |file| file.write("#{ssid} #{Time.now.strftime("%d/%m/%y")}") }
 end

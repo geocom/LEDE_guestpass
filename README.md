@@ -16,7 +16,7 @@ This will generate a password from a list of supplied words(supplied by a txt fi
 
 Setup Wi-Fi network
 
-Install ruby, ruby-json and ruby-open3 if not already installed via opkg or luci to use 4bithex you will need ruby-securerandom. If cloning will also need to add ruby-enc-extra ruby-net-http for any device set to clone from another.
+Install **ruby**, **ruby-json** and **ruby-open3** if not already installed via opkg or luci **to use 4bithex you will need ruby-securerandom**. **If cloning** you will also need to add **ruby-enc-extra** and **ruby-net-http** for any device set to clone from another.
 If that all sounds to difficult and you have the space for it install ruby and ruby-stdlib(this contains everything above)
 
 Option 1
@@ -53,7 +53,7 @@ Check that it works by running ruby password_setter.rb if it works then your goo
 This will run the code daily at 2:30AM.
 For any setup where cloning is required its important that you setup all of your devices time zone and time settings correctly in System -> System.
 
-`30 2 * * * ruby /overlay/LEDE_guestpass/password_setter.rb >> /tmp/guestpass_log.log 2>&1`
+`30 2 * * * cd /overlay/LEDE_guestpass; ruby password_setter.rb >> /tmp/guestpass_log.log 2>&1`
 
 You should set this at a time where the Wi-Fi is not going to be used. The Wi-Fi interface is restarted so if your using your Wi-Fi at this time you may lose connectivity for a short time.
 
@@ -72,6 +72,9 @@ eg if you name your guest Wi-Fi "Wi-Fi" and another SSID as "Private Wi-Fi" both
 Setter the programme will generate the password and set the password on the device its self.
 
 In Clone mode the programme will download the password from another device and set the password on its self. This is only useful on networks with multiple access points
+
+**nowifi = true or false or nil**
+Does not run the wi-fi setting configuration if there is no Wi-Fi interface needing to be set. Most useful for gateway devices that have no Wi-Fi but can be used to set the password and external AP's get the password from the gateway to then provide the Wi-Fi Access.
 
 **Setter Only Options**
 
