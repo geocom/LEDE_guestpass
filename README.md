@@ -74,6 +74,7 @@ Setter the programme will generate the password and set the password on the devi
 In Clone mode the programme will download the password from another device and set the password on its self. This is only useful on networks with multiple access points
 
 **nowifi = true or false or nil**
+
 Does not run the wi-fi setting configuration if there is no Wi-Fi interface needing to be set. Most useful for gateway devices that have no Wi-Fi but can be used to set the password and external AP's get the password from the gateway to then provide the Wi-Fi Access.
 
 **Setter Only Options**
